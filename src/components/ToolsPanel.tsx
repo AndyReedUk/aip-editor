@@ -1,24 +1,24 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { channelMeta } from '../types';
 
 interface ToolsPanelProps {
 	selectedChannel: string;
 	canUndo: boolean;
+	scalePct: number;
+	scaleTarget: 'all' | 'selected';
 	onShift(minutes: number): void;
-	onScale(factor: number, channelName?: string): void;
+	onScale(pct: number): void;
+	onScaleTargetChange(target: 'all' | 'selected'): void;
 	onUndo(): void;
 	onRevert(): void;
 }
 
 export function ToolsPanel(props: ToolsPanelProps) {
 	const [customShift, setCustomShift] = useState(60);
-	const [scalePercent, setScalePercent] = useState(100);
-	const [scaleTarget, setScaleTarget] = useState<'all' | 'selected'>('all');
+	const [levelField, setLevelField] = useState(props.scalePct);
 
-	const applyScale = (percent: number) => {
-		if (percent <= 0) return;
-		props.onScale(percent / 100, scaleTarget === 'selected' ? props.selectedChannel : undefined);
-	};
+	// Mirror the master level into the editable field whenever it changes via the +/- buttons or a re-baseline.
+	useEffect(() => setLevelField(props.scalePct), [props.scalePct]);
 
 	return (
 		<div className="tools">
@@ -46,29 +46,35 @@ export function ToolsPanel(props: ToolsPanelProps) {
 			</fieldset>
 
 			<fieldset>
-				<legend>Scale intensity</legend>
+				<legend>Master intensity</legend>
 				<div className="btn-row">
-					<button onClick={() => applyScale(90)}>-10%</button>
-					<button onClick={() => applyScale(95)}>-5%</button>
-					<button onClick={() => applyScale(105)}>+5%</button>
-					<button onClick={() => applyScale(110)}>+10%</button>
+					<button onClick={() => props.onScale(props.scalePct - 10)}>-10%</button>
+					<button onClick={() => props.onScale(props.scalePct - 5)}>-5%</button>
+					<button onClick={() => props.onScale(props.scalePct + 5)}>+5%</button>
+					<button onClick={() => props.onScale(props.scalePct + 10)}>+10%</button>
 				</div>
 				<div className="btn-row">
 					<input
 						type="number"
-						value={scalePercent}
-						min={1}
+						value={levelField}
+						min={0}
 						max={400}
-						onChange={e => setScalePercent(Number(e.target.value))}
+						onChange={e => setLevelField(Number(e.target.value))}
 					/>
 					<span className="unit">%</span>
-					<select value={scaleTarget} onChange={e => setScaleTarget(e.target.value as 'all' | 'selected')}>
+					<select
+						value={props.scaleTarget}
+						onChange={e => props.onScaleTargetChange(e.target.value as 'all' | 'selected')}
+					>
 						<option value="all">all channels</option>
 						<option value="selected">{channelMeta(props.selectedChannel).label} only</option>
 					</select>
-					<button onClick={() => applyScale(scalePercent)}>Apply scale</button>
+					<button onClick={() => props.onScale(levelField)}>Set level</button>
 				</div>
-				<p className="hint">Multiplies every point's intensity; clamped at 200% (HD limit).</p>
+				<p className="hint">
+					Level relative to the imported / last-edited profile (100% = unchanged). Boosts into HD up to 200% per
+					channel where there's headroom; set back to 100% to return exactly. Resets to 100% after any other edit.
+				</p>
 			</fieldset>
 
 			<fieldset>

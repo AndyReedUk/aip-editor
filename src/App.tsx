@@ -23,9 +23,20 @@ export default function App() {
 	const [cursorTime, setCursorTime] = useState(720);
 	const [error, setError] = useState('');
 	const pendingBaseRef = useRef<LightProfile | null>(null);
+	// Master intensity: a level (percent) relative to a baseline snapshot. Scaling always recomputes from the
+	// baseline rather than the current values, so it never compounds and setting 100% returns exactly. The
+	// baseline is re-captured (and the level reset to 100%) after any non-scale edit, undo, channel change, etc.
+	const [scaleBaseline, setScaleBaseline] = useState<LightProfile | null>(null);
+	const [scalePct, setScalePct] = useState(100);
+	const [scaleTarget, setScaleTarget] = useState<'all' | 'selected'>('all');
 
 	const profile = state.profile;
 	const history = state.history;
+
+	function rebaseline(p: LightProfile) {
+		setScaleBaseline(cloneProfile(p));
+		setScalePct(100);
+	}
 
 	function mutate(next: LightProfile, commit: boolean) {
 		if (!profile) return;
@@ -37,12 +48,35 @@ export default function App() {
 			if (!s.profile) return s;
 			return base ? { profile: next, history: [...s.history.slice(-99), base] } : { ...s, profile: next };
 		});
+		if (commit) rebaseline(next);
+	}
+
+	function applyScale(pct: number) {
+		if (!profile || !scaleBaseline) return;
+		const level = Math.max(0, Math.min(400, Math.round(pct)));
+		const next = scaleProfile(scaleBaseline, level / 100, scaleTarget === 'selected' ? selectedChannel : undefined);
+		const base = cloneProfile(profile);
+		pendingBaseRef.current = null;
+		setState(s => (s.profile ? { profile: next, history: [...s.history.slice(-99), base] } : s));
+		setScalePct(level);
+	}
+
+	function changeScaleTarget(target: 'all' | 'selected') {
+		setScaleTarget(target);
+		if (profile) rebaseline(profile);
+	}
+
+	function selectChannel(name: string) {
+		setSelectedChannel(name);
+		setSelectedPoint(null);
+		if (profile) rebaseline(profile);
 	}
 
 	function undo() {
-		setState(s =>
-			s.history.length === 0 ? s : { profile: s.history[s.history.length - 1], history: s.history.slice(0, -1) }
-		);
+		if (history.length === 0) return;
+		const prev = history[history.length - 1];
+		setState({ profile: prev, history: history.slice(0, -1) });
+		rebaseline(prev);
 		setSelectedPoint(null);
 	}
 
@@ -62,6 +96,8 @@ export default function App() {
 			setSelectedChannel(result.profile.channels[0]?.name ?? '');
 			setVisibleChannels(new Set(result.profile.channels.map(c => c.name)));
 			setSelectedPoint(null);
+			setScaleTarget('all');
+			rebaseline(result.profile);
 			pendingBaseRef.current = null;
 		} catch (e) {
 			setError((e as Error).message);
@@ -161,10 +197,7 @@ export default function App() {
 							selectedChannel={selectedChannel}
 							visibleChannels={visibleChannels}
 							cursorTime={cursorTime}
-							onSelect={name => {
-								setSelectedChannel(name);
-								setSelectedPoint(null);
-							}}
+							onSelect={selectChannel}
 							onToggleVisible={name =>
 								setVisibleChannels(v => {
 									const next = new Set(v);
@@ -189,8 +222,11 @@ export default function App() {
 							<ToolsPanel
 								selectedChannel={selectedChannel}
 								canUndo={history.length > 0}
+								scalePct={scalePct}
+								scaleTarget={scaleTarget}
 								onShift={m => profile && mutate(shiftProfile(profile, m), true)}
-								onScale={(f, ch) => profile && mutate(scaleProfile(profile, f, ch), true)}
+								onScale={applyScale}
+								onScaleTargetChange={changeScaleTarget}
 								onUndo={undo}
 								onRevert={() => {
 									if (!original || !profile) return;
