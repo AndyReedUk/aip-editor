@@ -164,14 +164,25 @@ export default function App() {
 						}}
 					/>
 				</label>
-				{profile && (
-					<div className="export-controls">
-						<input value={fileName} onChange={e => setFileName(e.target.value)} spellCheck={false} />
-						<button className="primary" onClick={handleExport}>
-							Export .aip
-						</button>
-					</div>
-				)}
+				<div className="header-right">
+					{profile && (
+						<div className="export-controls">
+							<input value={fileName} onChange={e => setFileName(e.target.value)} spellCheck={false} />
+							<button className="primary" onClick={handleExport}>
+								Export .aip
+							</button>
+						</div>
+					)}
+					<a
+						className="bmc-btn"
+						href="https://buymeacoffee.com/andyreed"
+						target="_blank"
+						rel="noopener noreferrer"
+						title="Support this project on Buy Me a Coffee"
+					>
+						<span aria-hidden="true">☕</span> Buy me a coffee
+					</a>
+				</div>
 			</header>
 
 			{error && <div className="banner error">{error}</div>}

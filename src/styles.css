@@ -29,10 +29,35 @@ header h1 {
 	flex: 0 0 auto;
 }
 
-.export-controls {
+.header-right {
 	margin-left: auto;
 	display: flex;
+	align-items: center;
+	gap: 12px;
+}
+
+.export-controls {
+	display: flex;
 	gap: 8px;
+}
+
+.bmc-btn {
+	display: inline-flex;
+	align-items: center;
+	gap: 6px;
+	background: #ffdd00;
+	color: #1a1a1a;
+	text-decoration: none;
+	font-weight: 600;
+	font-size: 14px;
+	padding: 7px 14px;
+	border-radius: 8px;
+	border: 1px solid #e5c400;
+	white-space: nowrap;
+}
+
+.bmc-btn:hover {
+	background: #ffe533;
 }
 
 .export-controls input {
