@@ -1,0 +1,335 @@
+* {
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	font-family: 'Segoe UI', system-ui, sans-serif;
+	background: #f4f6f8;
+	color: #222;
+}
+
+.app {
+	max-width: 1280px;
+	margin: 0 auto;
+	padding: 12px 20px 40px;
+	min-height: 100vh;
+}
+
+header {
+	display: flex;
+	align-items: center;
+	gap: 16px;
+	padding: 8px 0 16px;
+}
+
+header h1 {
+	font-size: 22px;
+	margin: 0;
+	flex: 0 0 auto;
+}
+
+.export-controls {
+	margin-left: auto;
+	display: flex;
+	gap: 8px;
+}
+
+.export-controls input {
+	width: 260px;
+}
+
+button,
+.file-btn {
+	background: #fff;
+	border: 1px solid #c4ccd4;
+	border-radius: 6px;
+	padding: 6px 14px;
+	font-size: 14px;
+	cursor: pointer;
+	user-select: none;
+}
+
+button:hover,
+.file-btn:hover {
+	background: #eef2f6;
+}
+
+button:disabled {
+	opacity: 0.45;
+	cursor: default;
+}
+
+button.primary,
+.file-btn {
+	background: #0e7a8a;
+	border-color: #0e7a8a;
+	color: #fff;
+}
+
+button.primary:hover,
+.file-btn:hover {
+	background: #0b6472;
+}
+
+button.danger {
+	color: #b02030;
+	border: none;
+	background: none;
+	font-size: 16px;
+	padding: 0 8px;
+}
+
+input,
+select {
+	border: 1px solid #c4ccd4;
+	border-radius: 6px;
+	padding: 6px 8px;
+	font-size: 14px;
+	background: #fff;
+}
+
+input[type='number'] {
+	width: 90px;
+}
+
+.banner {
+	border-radius: 8px;
+	padding: 10px 14px;
+	margin-bottom: 12px;
+	font-size: 14px;
+}
+
+.banner.warn {
+	background: #fff4d6;
+	border: 1px solid #e6c86e;
+}
+
+.banner.error {
+	background: #fde2e2;
+	border: 1px solid #e08b8b;
+}
+
+.empty {
+	text-align: center;
+	padding: 120px 0;
+	border: 2px dashed #c4ccd4;
+	border-radius: 12px;
+	background: #fff;
+}
+
+.main {
+	display: grid;
+	grid-template-columns: 250px 1fr;
+	gap: 16px;
+	align-items: start;
+}
+
+.channel-panel,
+.tools,
+.point-table {
+	background: #fff;
+	border: 1px solid #dde3e9;
+	border-radius: 10px;
+	padding: 12px 14px;
+}
+
+.channel-panel h3,
+.point-table h3 {
+	margin: 2px 0 10px;
+	font-size: 15px;
+}
+
+.channel-row {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 7px 8px;
+	border-radius: 6px;
+	cursor: pointer;
+}
+
+.channel-row:hover {
+	background: #f0f4f8;
+}
+
+.channel-row.selected {
+	background: #e2eef2;
+}
+
+.swatch {
+	display: inline-block;
+	width: 14px;
+	height: 14px;
+	border-radius: 50%;
+	flex: 0 0 auto;
+}
+
+.channel-name {
+	flex: 1;
+	font-size: 14px;
+}
+
+.channel-value {
+	font-weight: 600;
+	font-size: 14px;
+	font-variant-numeric: tabular-nums;
+}
+
+.add-channel {
+	margin-top: 10px;
+	display: flex;
+	gap: 8px;
+	align-items: center;
+	font-size: 13px;
+}
+
+.center {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.chart {
+	width: 100%;
+	background: #fff;
+	border: 1px solid #dde3e9;
+	border-radius: 10px;
+	touch-action: none;
+	cursor: crosshair;
+}
+
+.chart-bg {
+	fill: #fdfdfe;
+}
+
+.grid {
+	stroke: #e6eaee;
+	stroke-width: 1;
+}
+
+.grid-100 {
+	stroke: #b9c2cb;
+	stroke-width: 1;
+	stroke-dasharray: 5 4;
+}
+
+.tick {
+	font-size: 11px;
+	fill: #667;
+}
+
+.curve {
+	fill: none;
+	stroke-width: 2.5;
+	stroke-linejoin: round;
+}
+
+.curve.dim {
+	opacity: 0.4;
+	stroke-width: 2;
+}
+
+.curve.active {
+	stroke-width: 3;
+}
+
+.point {
+	stroke-width: 2.5;
+	cursor: grab;
+}
+
+.cursor line {
+	stroke: #f5a623;
+	stroke-width: 2.5;
+}
+
+.cursor-label-bg {
+	fill: #f5a623;
+}
+
+.cursor-label {
+	font-size: 11px;
+	font-weight: 600;
+	fill: #fff;
+}
+
+.tools {
+	display: flex;
+	gap: 14px;
+	flex-wrap: wrap;
+}
+
+.tools fieldset {
+	border: 1px solid #dde3e9;
+	border-radius: 8px;
+	flex: 1 1 260px;
+	margin: 0;
+}
+
+.tools legend {
+	font-size: 13px;
+	font-weight: 600;
+	padding: 0 6px;
+}
+
+.btn-row {
+	display: flex;
+	gap: 6px;
+	align-items: center;
+	margin-bottom: 8px;
+	flex-wrap: wrap;
+}
+
+.unit {
+	font-size: 13px;
+	color: #556;
+}
+
+.hint {
+	font-size: 12px;
+	color: #778;
+	margin: 4px 0 2px;
+}
+
+.point-table {
+	margin-top: 16px;
+}
+
+.point-table table {
+	border-collapse: collapse;
+	margin-bottom: 10px;
+}
+
+.point-table th,
+.point-table td {
+	padding: 4px 10px;
+	font-size: 13px;
+	text-align: left;
+}
+
+.point-table th {
+	color: #556;
+	font-weight: 600;
+	border-bottom: 1px solid #dde3e9;
+}
+
+.point-table tr.selected td {
+	background: #e2eef2;
+}
+
+.point-table .clock,
+.point-table .pct {
+	color: #667;
+	font-variant-numeric: tabular-nums;
+}
+
+.app-footer {
+	margin-top: 32px;
+	padding-top: 16px;
+	border-top: 1px solid #dde3e9;
+	font-size: 12px;
+	color: #889;
+	line-height: 1.5;
+	max-width: 760px;
+}
